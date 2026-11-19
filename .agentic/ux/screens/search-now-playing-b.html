@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wavelength - search and now playing (variant B: cards)</title>
+<style>
+:root{--color-bg:#17121f;--color-surface:#231b30;--color-surface-raised:#2e2440;--color-border:#3d3252;--color-text:#f5efe4;--color-muted:#b9aec8;--color-accent:#ff9466;--color-on-accent:#17121f;--color-signal:#5fd3c0;--color-focus:#5fd3c0;
+--font-family:system-ui,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;--fs-xs:12px;--fs-sm:13px;--fs-md:15px;--fs-lg:19px;--fs-xl:26px;--fs-xxl:34px;--sp-xs:4px;--sp-sm:8px;--sp-md:16px;--sp-lg:24px;--sp-xl:40px;--r-sm:6px;--r-md:12px;--r-lg:20px;--r-pill:999px;--tap:44px}
+*{box-sizing:border-box}body{margin:0;background:var(--color-bg);color:var(--color-text);font:var(--fs-md)/1.5 var(--font-family)}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:var(--sp-xl) var(--sp-lg) 140px}
+.hero{display:flex;flex-direction:column;align-items:center;gap:var(--sp-md);text-align:center}
+.hero h1{font-size:var(--fs-xxl);margin:0;letter-spacing:-.01em}.hero p{color:var(--color-muted);margin:0}
+.search{width:min(640px,100%);display:flex;align-items:center;gap:var(--sp-sm);background:var(--color-surface-raised);border-radius:var(--r-pill);padding:0 var(--sp-md);min-height:56px;border:2px solid var(--color-accent)}
+.search input{flex:1;border:0;background:none;color:var(--color-text);font:inherit;font-size:var(--fs-lg)}
+h2{font-size:var(--fs-lg);margin:var(--sp-xl) 0 var(--sp-md)}
+.artists{display:flex;gap:var(--sp-lg)}.artist{display:flex;flex-direction:column;align-items:center;gap:var(--sp-sm);width:132px;text-align:center}
+.av{width:112px;height:112px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#ff9466,#6b3d7a 60%,#231b30)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:var(--sp-md)}
+.card{background:var(--color-surface);border-radius:var(--r-md);padding:var(--sp-sm);position:relative}
+.cover{aspect-ratio:1;border-radius:var(--r-sm);background:linear-gradient(135deg,#5fd3c0,#2e2440 70%)}.cover.c2{background:linear-gradient(200deg,#ff9466,#3d3252 65%)}.cover.c3{background:repeating-linear-gradient(90deg,#2e2440 0 10px,#3d3252 10px 20px)}
+.card strong{display:block;margin-top:var(--sp-sm)}.card small{color:var(--color-muted)}
+.play{position:absolute;right:16px;top:calc(100% - 96px);width:var(--tap);height:var(--tap);border-radius:50%;border:0;background:var(--color-accent);color:var(--color-on-accent);font-size:18px}
+.pill{position:fixed;left:50%;transform:translateX(-50%);bottom:var(--sp-md);width:min(860px,calc(100% - 24px));background:var(--color-surface-raised);border-radius:var(--r-lg);box-shadow:0 12px 40px #0008;display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-sm) var(--sp-md)}
+.mini{width:52px;height:52px;border-radius:var(--r-sm);background:linear-gradient(135deg,#5fd3c0,#2e2440 70%)}
+.meta{flex:1;min-width:0}.meta small{color:var(--color-muted)}.ring{height:3px;background:var(--color-border);border-radius:2px;margin-top:6px}.ring i{display:block;width:38%;height:100%;background:var(--color-accent)}
+.btn{min-width:var(--tap);min-height:var(--tap);border-radius:50%;border:0;background:none;color:var(--color-text);font-size:18px}.btn.main{background:var(--color-accent);color:var(--color-on-accent)}
+.qbtn{border:1px solid var(--color-border);background:none;color:var(--color-text);border-radius:var(--r-pill);min-height:var(--tap);padding:0 var(--sp-md);font:inherit}
+.drawer{position:fixed;right:var(--sp-md);bottom:110px;width:320px;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-md);padding:var(--sp-md)}
+.drawer h3{margin:0 0 var(--sp-sm);font-size:var(--fs-md)}.drawer ol{margin:0;padding-left:20px;color:var(--color-muted)}.drawer li span{color:var(--color-text)}
+@media (max-width:760px){.wrap{padding:var(--sp-lg) var(--sp-md) 160px}.hero h1{font-size:var(--fs-xl)}.artists{overflow-x:auto}.grid{grid-template-columns:repeat(2,1fr)}.drawer{left:var(--sp-md);right:var(--sp-md);width:auto;bottom:96px}.pill .hide{display:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <div class="hero">
+  <svg width="48" height="48" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="none" stroke="#ff9466" stroke-width="2"/><path d="M4 14c2.5-7 5-7 7.5 0s5 7 7.5 0 4-5 5-3" fill="none" stroke="#5fd3c0" stroke-width="2.2" stroke-linecap="round"/></svg>
+  <h1>What are you tuning into?</h1>
+  <p>300 independent South African labels, one search.</p>
+  <label class="search"><span aria-hidden="true">&#9906;</span><input aria-label="Search tracks, artists and albums" value="meridien"></label>
+ </div>
+ <h2>Artists</h2>
+ <div class="artists"><div class="artist"><div class="av"></div><strong>Dune Méridien</strong><small style="color:var(--color-muted)">Saltpan Sounds</small></div></div>
+ <h2>Albums</h2>
+ <div class="grid">
+  <div class="card"><div class="cover"></div><strong>Méridien Nights</strong><small>Dune Méridien &middot; 2026</small></div>
+  <div class="card"><div class="cover c2"></div><strong>Méridien Live at the Pan</strong><small>Dune Méridien &middot; 2024</small></div>
+ </div>
+ <h2>Tracks</h2>
+ <div class="grid">
+  <div class="card"><div class="cover c3"></div><strong>Night Bus to Meridian Street</strong><small>3:41 &middot; Méridien Nights</small><button class="play" aria-label="Play Night Bus to Meridian Street">&#9654;</button></div>
+  <div class="card"><div class="cover c2"></div><strong>Lanterns over Saltpan</strong><small>4:05 &middot; Méridien Nights</small><button class="play" aria-label="Play Lanterns over Saltpan">&#9654;</button></div>
+  <div class="card"><div class="cover"></div><strong>Salt Road Lullaby</strong><small>2:58 &middot; Méridien Nights</small><button class="play" aria-label="Play Salt Road Lullaby">&#9654;</button></div>
+ </div>
+</div>
+<section class="drawer" aria-label="Queue"><h3>Up next</h3><ol><li><span>Salt Road Lullaby</span> &middot; Dune Méridien</li><li><span>Tidewater Hymn No. 2</span> &middot; Thembé &amp; The Tide</li></ol></section>
+<div class="pill" role="region" aria-label="Now playing">
+ <div class="mini" aria-hidden="true"></div>
+ <div class="meta"><strong>Night Bus to Meridian Street</strong><br><small>Dune Méridien</small><div class="ring"><i></i></div></div>
+ <button class="btn hide" aria-label="Previous">&#9198;</button><button class="btn main" aria-label="Pause">&#10074;&#10074;</button><button class="btn" aria-label="Next">&#9197;</button>
+ <button class="qbtn" aria-expanded="true">Queue 2</button>
+</div>
+</body>
+</html>

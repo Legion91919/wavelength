@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wavelength - search and now playing (final)</title>
+<style>
+:root{--color-bg:#17121f;--color-surface:#231b30;--color-surface-raised:#2e2440;--color-border:#3d3252;--color-text:#f5efe4;--color-muted:#b9aec8;--color-accent:#ff9466;--color-on-accent:#17121f;--color-signal:#5fd3c0;--color-danger:#ff7a8a;--color-focus:#5fd3c0;
+--font-family:system-ui,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;--font-mono:ui-monospace,Menlo,Consolas,monospace;
+--fs-xs:12px;--fs-sm:13px;--fs-md:15px;--fs-lg:19px;--fs-xl:26px;--sp-xs:4px;--sp-sm:8px;--sp-md:16px;--sp-lg:24px;--sp-xl:40px;--r-sm:6px;--r-md:12px;--r-lg:20px;--r-pill:999px;--tap:44px;--bar:76px;--queue:340px}
+*{box-sizing:border-box}body{margin:0;background:var(--color-bg);color:var(--color-text);font:var(--fs-md)/1.5 var(--font-family)}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.switcher{display:flex;width:max-content;margin:8px auto;gap:4px;background:var(--color-surface-raised);padding:4px;border-radius:var(--r-pill);border:1px dashed var(--color-border);font-size:var(--fs-xs)}
+.switcher button{background:none;border:0;color:var(--color-muted);padding:4px 10px;border-radius:var(--r-pill);font:inherit}.switcher button[aria-pressed=true]{background:var(--color-accent);color:var(--color-on-accent)}
+.app{display:grid;grid-template-columns:1fr var(--queue);grid-template-rows:auto 1fr;min-height:100vh;padding-bottom:var(--bar)}
+header{grid-column:1/-1;display:flex;gap:var(--sp-md);align-items:center;padding:var(--sp-md) var(--sp-lg);border-bottom:1px solid var(--color-border)}
+.logo{display:flex;gap:var(--sp-sm);align-items:center;font-weight:700}
+.search{flex:1;max-width:720px;display:flex;align-items:center;gap:var(--sp-sm);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-pill);padding:0 var(--sp-md);min-height:48px}
+.search:focus-within{border-color:var(--color-accent)}.search input{flex:1;background:none;border:0;color:var(--color-text);font:inherit;outline:none}
+main{padding:var(--sp-md) var(--sp-lg);overflow:auto}
+.hint{color:var(--color-muted);font-size:var(--fs-sm);margin:0 0 var(--sp-md)}
+section.group h2{font-size:var(--fs-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted);margin:var(--sp-lg) 0 var(--sp-sm)}
+.row{display:flex;align-items:center;gap:var(--sp-md);padding:var(--sp-sm);border-radius:var(--r-sm);min-height:56px}.row:hover{background:var(--color-surface)}.row.playing{background:var(--color-surface-raised)}
+.thumb{width:40px;height:40px;border-radius:var(--r-sm);flex:none;background:linear-gradient(135deg,var(--color-signal),var(--color-surface-raised) 70%)}.thumb.round{border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--color-accent),var(--color-surface-raised) 70%)}
+.row .t{flex:1;min-width:0}.row .t strong{font-weight:560;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.row .t small{color:var(--color-muted)}
+.dur{font:var(--fs-sm) var(--font-mono);color:var(--color-muted);font-variant-numeric:tabular-nums}
+mark{background:none;color:var(--color-accent);font-weight:700}
+.btn{min-width:var(--tap);min-height:var(--tap);border-radius:var(--r-pill);border:1px solid var(--color-border);background:none;color:var(--color-text);font:inherit;padding:0 12px;cursor:pointer}.btn.primary{background:var(--color-accent);color:var(--color-on-accent);border:0;font-weight:700}
+.skel{height:56px;border-radius:var(--r-sm);margin:6px 0;background:linear-gradient(90deg,var(--color-surface),var(--color-surface-raised),var(--color-surface));background-size:200% 100%;animation:sh 1.2s infinite}@keyframes sh{to{background-position:-200% 0}}
+.panel{border:1px solid var(--color-border);border-radius:var(--r-md);padding:var(--sp-lg);max-width:560px;margin-top:var(--sp-lg)}.panel.error{border-color:var(--color-danger)}.panel h2{margin:0 0 var(--sp-sm);font-size:var(--fs-lg)}.panel p{margin:0 0 var(--sp-md);color:var(--color-muted)}.panel .icon{color:var(--color-danger);font-weight:700}
+aside{border-left:1px solid var(--color-border);padding:var(--sp-md)}aside h2{font-size:var(--fs-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted);margin:0 0 var(--sp-sm)}
+aside ol{list-style:none;margin:0;padding:0}aside li{display:flex;align-items:center;gap:var(--sp-sm);padding:6px 0;border-bottom:1px solid var(--color-surface-raised)}aside li .t{flex:1;min-width:0}aside li small{display:block;color:var(--color-muted)}
+.bar{position:fixed;left:0;right:0;bottom:0;min-height:var(--bar);background:var(--color-surface);border-top:1px solid var(--color-border);display:grid;grid-template-columns:minmax(0,280px) 1fr minmax(0,260px);gap:var(--sp-md);align-items:center;padding:var(--sp-sm) var(--sp-lg)}
+.bar .now strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bar .now small{color:var(--color-muted)}
+.ctrls{display:flex;gap:var(--sp-sm);justify-content:center}.prog{display:flex;gap:var(--sp-sm);align-items:center;font:var(--fs-xs) var(--font-mono);color:var(--color-muted)}.prog .t{flex:1;height:4px;background:var(--color-border);border-radius:2px}.prog i{display:block;width:38%;height:100%;background:var(--color-accent);border-radius:2px}
+.status{font-size:var(--fs-sm);display:flex;gap:var(--sp-sm);align-items:center;justify-content:flex-end}.counted{color:var(--color-signal)}.pending{color:var(--color-muted)}
+.qtoggle{display:none}
+@media (max-width:1023px){.app{grid-template-columns:1fr}aside{display:none;position:fixed;left:0;right:0;bottom:var(--bar);max-height:55vh;overflow:auto;background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-lg) var(--r-lg) 0 0;z-index:5}aside.open{display:block}.qtoggle{display:inline-block}}
+@media (max-width:640px){header{padding:var(--sp-sm) var(--sp-md)}.logo span{display:none}main{padding:var(--sp-sm) var(--sp-md)}.row .add-label{display:none}.row .dur{display:none}.bar{grid-template-columns:1fr auto;padding:var(--sp-sm) var(--sp-md)}.bar .mid .prog,.bar .status .counted{display:none}.ctrls .prev{display:none}.bar .status{grid-column:1/-1;justify-content:space-between}}
+</style>
+</head>
+<body>
+<div class="switcher" role="group" aria-label="Preview state (design only)">
+ <button data-s="loading" aria-pressed="false">Loading</button><button data-s="empty" aria-pressed="false">Empty</button><button data-s="error" aria-pressed="false">Error</button><button data-s="success" aria-pressed="true">Success</button>
+</div>
+<div class="app">
+<header>
+ <div class="logo"><svg width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="none" stroke="#ff9466" stroke-width="2"/><path d="M4 14c2.5-7 5-7 7.5 0s5 7 7.5 0 4-5 5-3" fill="none" stroke="#5fd3c0" stroke-width="2.2" stroke-linecap="round"/></svg><span>wavelength</span></div>
+ <label class="search"><span aria-hidden="true">&#9906;</span><span class="sr">Search tracks, artists and albums</span><input id="q" type="search" value="meridien" placeholder="Search tracks, artists, albums"></label>
+</header>
+<main aria-live="polite">
+ <div data-state="loading" hidden><p class="hint">Searching&hellip;</p><div class="skel"></div><div class="skel"></div><div class="skel"></div><div class="skel"></div></div>
+ <div data-state="empty" hidden><div class="panel"><h2>No matches for "xqzzt"</h2><p>Try fewer letters or another spelling. Accents are optional: "meridien" finds "Méridien".</p></div></div>
+ <div data-state="error" hidden><div class="panel error" role="alert"><h2><span class="icon" aria-hidden="true">!</span> Search is unavailable</h2><p>We couldn't reach the catalogue. What's playing keeps playing.</p><button class="btn primary">Try again</button></div></div>
+ <div data-state="success">
+  <p class="hint">6 results in 4 ms. Accents optional.</p>
+  <section class="group" aria-labelledby="h-tracks"><h2 id="h-tracks">Tracks</h2>
+   <div class="row playing"><div class="thumb" aria-hidden="true"></div><div class="t"><strong>Night Bus to <mark>Meridian</mark> Street</strong><small>Dune <mark>Méridien</mark> &middot; Méridien Nights</small></div><span class="dur">3:41</span><button class="btn" aria-label="Playing now" disabled>&#9835;</button><button class="btn" aria-label="Play Night Bus to Meridian Street next">+<span class="add-label"> Next</span></button></div>
+   <div class="row"><div class="thumb" aria-hidden="true"></div><div class="t"><strong>Lanterns over Saltpan</strong><small>Dune <mark>Méridien</mark> &middot; Méridien Nights</small></div><span class="dur">4:05</span><button class="btn primary" aria-label="Play Lanterns over Saltpan">&#9654;</button><button class="btn" aria-label="Play Lanterns over Saltpan next">+<span class="add-label"> Next</span></button></div>
+   <div class="row"><div class="thumb" aria-hidden="true"></div><div class="t"><strong>Salt Road Lullaby</strong><small>Dune <mark>Méridien</mark> &middot; Méridien Nights</small></div><span class="dur">2:58</span><button class="btn primary" aria-label="Play Salt Road Lullaby">&#9654;</button><button class="btn" aria-label="Play Salt Road Lullaby next">+<span class="add-label"> Next</span></button></div>
+  </section>
+  <section class="group" aria-labelledby="h-artists"><h2 id="h-artists">Artists</h2>
+   <div class="row"><div class="thumb round" aria-hidden="true"></div><div class="t"><strong>Dune <mark>Méridien</mark></strong><small>Saltpan Sounds &middot; 3 tracks</small></div><button class="btn">Play top tracks</button></div>
+  </section>
+  <section class="group" aria-labelledby="h-albums"><h2 id="h-albums">Albums</h2>
+   <div class="row"><div class="thumb" aria-hidden="true"></div><div class="t"><strong><mark>Méridien</mark> Nights</strong><small>Dune Méridien &middot; 2026 &middot; Saltpan Sounds</small></div><button class="btn">Queue album</button></div>
+  </section>
+ </div>
+</main>
+<aside id="queue" aria-label="Queue"><h2>Up next (2)</h2>
+ <ol><li><div class="t">Salt Road Lullaby<small>Dune Méridien</small></div><span class="dur">2:58</span><button class="btn" aria-label="Remove Salt Road Lullaby from queue">&times;</button></li>
+ <li><div class="t">Tidewater Hymn No. 2<small>Thembé &amp; The Tide</small></div><span class="dur">3:20</span><button class="btn" aria-label="Remove Tidewater Hymn No. 2 from queue">&times;</button></li></ol>
+ <p class="hint" style="margin-top:12px">Empty queue state: "Nothing queued. Use + Next on any track."</p>
+</aside>
+</div>
+<div class="bar" role="region" aria-label="Now playing">
+ <div class="now"><strong>Night Bus to Meridian Street</strong><small>Dune Méridien &middot; Saltpan Sounds</small></div>
+ <div class="mid"><div class="ctrls"><button class="btn prev" aria-label="Restart track">&#9198;</button><button class="btn primary" aria-label="Pause">&#10074;&#10074;</button><button class="btn" aria-label="Next track">&#9197;</button></div><div class="prog"><span>1:24</span><span class="t" role="progressbar" aria-label="Position" aria-valuemin="0" aria-valuemax="221" aria-valuenow="84"><i></i></span><span>3:41</span></div></div>
+ <div class="status"><span class="counted">&#10003; Counted for Saltpan Sounds</span><button class="btn qtoggle" aria-controls="queue" aria-expanded="false">Queue 2</button></div>
+</div>
+<script>
+document.querySelectorAll('.switcher button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.switcher button').forEach(x=>x.setAttribute('aria-pressed',x===b));document.querySelectorAll('[data-state]').forEach(s=>s.hidden=s.dataset.state!==b.dataset.s)});
+const qt=document.querySelector('.qtoggle');qt.onclick=()=>{const o=document.getElementById('queue').classList.toggle('open');qt.setAttribute('aria-expanded',o)};
+</script>
+</body>
+</html>

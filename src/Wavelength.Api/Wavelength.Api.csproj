@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>Wavelength.Api</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../Wavelength.SharedKernel/Wavelength.SharedKernel.csproj" />
+    <ProjectReference Include="../Modules/Catalogue/Wavelength.Catalogue.csproj" />
+    <ProjectReference Include="../Modules/Playback/Wavelength.Playback.csproj" />
+    <ProjectReference Include="../Modules/Playlists/Wavelength.Playlists.csproj" />
+    <ProjectReference Include="../Modules/Royalties/Wavelength.Royalties.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Wavelength.Tests" />
+  </ItemGroup>
+</Project>

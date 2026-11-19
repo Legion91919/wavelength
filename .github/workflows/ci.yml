@@ -1,0 +1,98 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        if: hashFiles('**/*.sln', '**/*.csproj') != ''
+        run: dotnet restore
+
+      - name: Build (warnings as errors)
+        if: hashFiles('**/*.sln', '**/*.csproj') != ''
+        run: dotnet build --no-restore -c Release -warnaserror
+
+      - name: Format check
+        if: hashFiles('**/*.sln', '**/*.csproj') != ''
+        run: dotnet format --verify-no-changes --no-restore
+
+      - name: Test with coverage
+        if: hashFiles('**/*.sln', '**/*.csproj') != ''
+        run: dotnet test --no-build -c Release --collect:"XPlat Code Coverage" --results-directory TestResults
+
+      - name: Coverage gate (70% line, ratchet up over time)
+        if: hashFiles('TestResults/**/coverage.cobertura.xml') != ''
+        run: |
+          dotnet tool install -g dotnet-reportgenerator-globaltool
+          reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:coverage -reporttypes:TextSummary
+          cat coverage/Summary.txt
+          pct=$(grep -oP 'Line coverage: \K[0-9.]+' coverage/Summary.txt)
+          awk -v p="$pct" 'BEGIN { exit (p < 70) }' || { echo "Line coverage $pct% is below 70%"; exit 1; }
+
+      - name: Vulnerable packages
+        if: hashFiles('**/*.sln', '**/*.csproj') != ''
+        run: |
+          dotnet list package --vulnerable --include-transitive | tee vuln.txt
+          ! grep -q "has the following vulnerable packages" vuln.txt
+
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - name: Unit tests (vitest)
+        run: npx vitest run
+      - name: Type-check and build
+        run: npm run build
+
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Secret scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Privacy guard (secrets + personal data)
+        run: python3 tools/privacy_guard.py --all
+
+  handover-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Install arch-advisor
+        run: |
+          git clone --depth 1 https://github.com/${{ vars.KIT_REPO || 'Legion91919/agentic-engineering-kit' }} /tmp/kit
+          dotnet pack /tmp/kit/src/ArchAdvisor.Mcp -c Release -o /tmp/nupkg
+          dotnet tool install -g arch-advisor --add-source /tmp/nupkg
+      - name: Handover readiness (min 80%)
+        run: arch-advisor check . --min 80

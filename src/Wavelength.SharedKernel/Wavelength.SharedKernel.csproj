@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Wavelength.SharedKernel</RootNamespace>
+  </PropertyGroup>
+</Project>

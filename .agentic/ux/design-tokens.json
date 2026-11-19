@@ -1,0 +1,41 @@
+{
+  "$comment": "Wavelength tokens. Dark 'dusk' theme. All text pairs checked against WCAG AA (>= 4.5:1); ratios noted in contrast.",
+  "color": {
+    "bg": "#17121f",
+    "surface": "#231b30",
+    "surfaceRaised": "#2e2440",
+    "border": "#3d3252",
+    "text": "#f5efe4",
+    "muted": "#b9aec8",
+    "accent": "#ff9466",
+    "onAccent": "#17121f",
+    "signal": "#5fd3c0",
+    "danger": "#ff7a8a",
+    "success": "#7ee0a3",
+    "focus": "#5fd3c0"
+  },
+  "contrast": {
+    "text/bg": 16.06,
+    "text/surfaceRaised": 12.72,
+    "muted/bg": 8.71,
+    "muted/surface": 7.83,
+    "muted/surfaceRaised": 6.9,
+    "accent/bg": 8.47,
+    "accent/surface": 7.62,
+    "onAccent/accent": 8.47,
+    "signal/bg": 10.12,
+    "danger/bg": 7.35,
+    "success/bg": 11.44
+  },
+  "font": {
+    "family": "system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+    "mono": "ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace",
+    "size": { "xs": "12px", "sm": "13px", "md": "15px", "lg": "19px", "xl": "26px", "xxl": "34px" },
+    "weight": { "regular": 400, "medium": 560, "bold": 700 },
+    "lineHeight": { "tight": 1.2, "normal": 1.5 }
+  },
+  "space": { "xxs": "2px", "xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "40px" },
+  "radius": { "sm": "6px", "md": "12px", "lg": "20px", "pill": "999px" },
+  "size": { "tapTarget": "44px", "nowPlayingBar": "76px", "queuePanel": "340px" },
+  "motion": { "fast": "120ms", "normal": "200ms" }
+}

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wavelength - search and now playing (variant C: queue-first)</title>
+<style>
+:root{--color-bg:#17121f;--color-surface:#231b30;--color-surface-raised:#2e2440;--color-border:#3d3252;--color-text:#f5efe4;--color-muted:#b9aec8;--color-accent:#ff9466;--color-on-accent:#17121f;--color-signal:#5fd3c0;--color-focus:#5fd3c0;
+--font-family:system-ui,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;--font-mono:ui-monospace,Menlo,Consolas,monospace;--fs-xs:12px;--fs-sm:13px;--fs-md:15px;--fs-lg:19px;--fs-xl:26px;--fs-xxl:34px;--sp-xs:4px;--sp-sm:8px;--sp-md:16px;--sp-lg:24px;--sp-xl:40px;--r-sm:6px;--r-md:12px;--r-lg:20px;--r-pill:999px;--tap:44px}
+*{box-sizing:border-box}body{margin:0;background:var(--color-bg);color:var(--color-text);font:var(--fs-md)/1.5 var(--font-family)}
+:focus-visible{outline:2px solid var(--color-focus);outline-offset:2px}
+.layout{display:grid;grid-template-columns:1.1fr 1fr;min-height:100vh}
+.stage{padding:var(--sp-xl);display:flex;flex-direction:column;gap:var(--sp-lg);background:linear-gradient(180deg,var(--color-surface-raised),var(--color-bg))}
+.art{aspect-ratio:1;max-width:360px;border-radius:var(--r-lg);background:conic-gradient(from 200deg,#ff9466,#6b3d7a,#5fd3c0,#ff9466)}
+.stage h1{margin:0;font-size:var(--fs-xxl)}.stage p{margin:0;color:var(--color-muted)}
+.progress{display:flex;gap:var(--sp-sm);align-items:center;font:var(--fs-sm) var(--font-mono);color:var(--color-muted)}.progress .t{flex:1;height:6px;background:var(--color-border);border-radius:3px}.progress i{display:block;width:38%;height:100%;background:var(--color-accent);border-radius:3px}
+.controls{display:flex;gap:var(--sp-md);align-items:center}.btn{min-width:56px;min-height:56px;border-radius:50%;border:1px solid var(--color-border);background:none;color:var(--color-text);font-size:20px}.btn.main{width:72px;height:72px;background:var(--color-accent);color:var(--color-on-accent);border:0}
+.steps{display:flex;gap:var(--sp-sm);font-size:var(--fs-sm)}.step{padding:4px 12px;border-radius:var(--r-pill);border:1px solid var(--color-border);color:var(--color-muted)}.step.done{border-color:var(--color-signal);color:var(--color-signal)}
+.side{padding:var(--sp-xl) var(--sp-lg);display:flex;flex-direction:column;gap:var(--sp-md)}
+.cmd{display:flex;align-items:center;gap:var(--sp-sm);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--r-md);padding:0 var(--sp-md);min-height:52px}.cmd input{flex:1;border:0;background:none;color:var(--color-text);font:inherit}
+.results{background:var(--color-surface);border-radius:var(--r-md);padding:var(--sp-sm)}.results h2,.queue h2{font-size:var(--fs-xs);text-transform:uppercase;letter-spacing:.1em;color:var(--color-muted);margin:var(--sp-sm)}
+.row{display:flex;align-items:center;gap:var(--sp-sm);padding:var(--sp-sm);border-radius:var(--r-sm)}.row:hover{background:var(--color-surface-raised)}.row .t{flex:1}.row small{display:block;color:var(--color-muted)}
+.chip{min-height:36px;padding:0 12px;border-radius:var(--r-pill);border:1px solid var(--color-border);background:none;color:var(--color-text);font:inherit;font-size:var(--fs-sm)}.chip.accent{background:var(--color-accent);color:var(--color-on-accent);border:0;font-weight:700}
+.queue ol{list-style:none;margin:0;padding:0;counter-reset:q}.queue li{counter-increment:q;display:flex;gap:var(--sp-sm);align-items:center;padding:var(--sp-sm);border-bottom:1px solid var(--color-surface-raised)}.queue li::before{content:counter(q);font:var(--fs-sm) var(--font-mono);color:var(--color-muted);width:20px}
+@media (max-width:760px){.layout{grid-template-columns:1fr}.stage{padding:var(--sp-lg) var(--sp-md)}.art{max-width:220px}.stage h1{font-size:var(--fs-xl)}.side{padding:var(--sp-md)}}
+</style>
+</head>
+<body>
+<div class="layout">
+ <section class="stage" aria-label="Now playing">
+  <div style="display:flex;gap:8px;align-items:center;font-weight:700"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="13" fill="none" stroke="#ff9466" stroke-width="2"/><path d="M4 14c2.5-7 5-7 7.5 0s5 7 7.5 0 4-5 5-3" fill="none" stroke="#5fd3c0" stroke-width="2.2" stroke-linecap="round"/></svg>wavelength</div>
+  <div class="art" aria-hidden="true"></div>
+  <div><h1>Night Bus to Meridian Street</h1><p>Dune Méridien &middot; Méridien Nights &middot; Saltpan Sounds</p></div>
+  <div class="progress"><span>1:24</span><span class="t"><i></i></span><span>3:41</span></div>
+  <div class="controls"><button class="btn" aria-label="Previous">&#9198;</button><button class="btn main" aria-label="Pause">&#10074;&#10074;</button><button class="btn" aria-label="Next">&#9197;</button></div>
+  <div class="steps" aria-label="Royalty progress"><span class="step done">&#10003; Started</span><span class="step done">&#10003; 30 s: counted for label</span><span class="step">Finished</span></div>
+ </section>
+ <section class="side">
+  <label class="cmd"><span aria-hidden="true">&#9906;</span><input aria-label="Search tracks, artists and albums" value="tide"></label>
+  <div class="results"><h2>Results for "tide"</h2>
+   <div class="row"><span class="t">Tidewater Hymn No. 2<small>Track &middot; Thembé &amp; The Tide &middot; 3:20</small></span><button class="chip accent">Play next</button><button class="chip">Queue</button></div>
+   <div class="row"><span class="t">Thembé &amp; The Tide<small>Artist &middot; Jacaranda Tape Co.</small></span><button class="chip">Open</button></div>
+   <div class="row"><span class="t">Tidewater Hymns<small>Album &middot; 9 tracks</small></span><button class="chip">Queue all</button></div>
+  </div>
+  <div class="queue"><h2>Up next</h2><ol>
+   <li><span style="flex:1">Salt Road Lullaby <small style="color:var(--color-muted)">Dune Méridien</small></span><button class="chip" aria-label="Remove Salt Road Lullaby">&times;</button></li>
+   <li><span style="flex:1">Lantern Season <small style="color:var(--color-muted)">Kwasa Lantern</small></span><button class="chip" aria-label="Remove Lantern Season">&times;</button></li></ol></div>
+ </section>
+</div>
+</body>
+</html>
