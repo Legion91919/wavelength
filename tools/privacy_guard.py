@@ -198,7 +198,11 @@ def install(repo: Path) -> int:
     hook = hooks / "pre-commit"
     script = Path(__file__).resolve().relative_to(repo).as_posix()
     # Always LF: Git's sh can't run a hook whose shebang line ends in CRLF (Windows' default for write_text).
-    hook.write_bytes(f"#!/bin/sh\npython \"{script}\" --staged || python3 \"{script}\" --staged\n".encode("utf-8"))
+    # Run the guard exactly once (a "||" fallback would re-run it after a block). Pick the first Python that
+    # actually runs: on Windows "python3" is often the Microsoft Store placeholder, so probe instead of trusting PATH.
+    hook.write_bytes((f"#!/bin/sh\nfor py in python3 python py; do\n"
+                      f"  if \"$py\" -c \"\" >/dev/null 2>&1; then exec \"$py\" \"{script}\" --staged; fi\n"
+                      f"done\necho \"privacy-guard: no working Python found\" >&2\nexit 1\n").encode("utf-8"))
     try:
         hook.chmod(0o755)
     except OSError:

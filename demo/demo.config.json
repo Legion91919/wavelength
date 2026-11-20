@@ -1,0 +1,8 @@
+{
+  "start": [
+    { "name": "api", "cmd": "dotnet run --project src/Wavelength.Api --no-build", "env": { "ASPNETCORE_ENVIRONMENT": "Development", "ASPNETCORE_URLS": "http://localhost:5105" }, "ready": "http://localhost:5105/health/ready" },
+    { "name": "web", "cmd": "npm run dev -- --port 6105 --strictPort", "cwd": "web", "ready": "http://localhost:6105" }
+  ],
+  "url": "http://localhost:6105",
+  "viewport": { "width": 1280, "height": 800 }
+}

@@ -1,0 +1,40 @@
+# Dependabot: weekly dependency updates, minor and patch grouped into one PR per ecosystem.
+# Copy to .github/dependabot.yml. Delete ecosystems the repo doesn't use and list the folders
+# that hold each manifest (tools/add_security_baseline.py does both for you).
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directories:
+      - "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      nuget-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directories:
+      - "/demo"
+      - "/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    groups:
+      actions-minor-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]

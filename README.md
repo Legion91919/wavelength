@@ -1,5 +1,15 @@
 # Wavelength
 
+## See it in action
+
+![Wavelength walkthrough: typing cafe finds the track Café Kwasa, the track plays and is marked Counted for Ironveld Records at 30 listened seconds, then two tracks are added with + Next and one is removed from the queue](docs/media/demo.gif)
+
+| Accent-insensitive search | Play counted for the label | Queue |
+|---|---|---|
+| ![Search for cafe returning Café Kwasa with the match highlighted](docs/media/search.png) | ![Now-playing bar showing Counted for Ironveld Records](docs/media/counted.png) | ![Up next queue with Salt Road Lullaby](docs/media/queue.png) |
+
+Full-quality video: [docs/media/demo.mp4](docs/media/demo.mp4). Recorded from the running app with `demo/` (`cd demo && npm install && npm run record`).
+
 ## Design at a glance
 An original music streaming service for Mzansi Indie Alliance (fictional), a collective of 300 independent South African labels. Listeners search and play; labels get every qualifying play counted once and paid from a ledger that reconciles to the cent.
 

@@ -1,0 +1,48 @@
+# CodeQL static analysis. Copy to .github/workflows/codeql.yml and keep only the languages
+# in this repo (tools/add_security_baseline.py does this for you).
+# Actions are pinned to a tag here. Pin each one to its full commit SHA before relying on it,
+# keeping the tag as a comment (uses: owner/action@<40-char-sha> # v4); Dependabot keeps SHAs current.
+name: codeql
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * 1"   # weekly, Monday 04:23 UTC
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write   # upload results to code scanning
+      actions: read            # read workflow run info (needed on private repos)
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: csharp
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - uses: actions/checkout@v4   # pin by SHA
+        with:
+          persist-credentials: false
+
+      - uses: github/codeql-action/init@v4   # pin by SHA
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+          queries: security-extended
+
+      - uses: github/codeql-action/analyze@v4   # pin by SHA
+        with:
+          category: "/language:${{ matrix.language }}"
