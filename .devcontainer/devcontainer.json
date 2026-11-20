@@ -1,0 +1,36 @@
+{
+  "name": "wavelength",
+  "image": "mcr.microsoft.com/devcontainers/dotnet:1-8.0-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "forwardPorts": [
+    5105,
+    5205
+  ],
+  "portsAttributes": {
+    "5105": {
+      "label": "API (Wavelength)",
+      "onAutoForward": "notify"
+    },
+    "5205": {
+      "label": "Web app",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csdevkit",
+        "bierner.markdown-mermaid",
+        "editorconfig.editorconfig"
+      ]
+    }
+  },
+  "hostRequirements": {
+    "cpus": 2
+  }
+}

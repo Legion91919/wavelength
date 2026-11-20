@@ -13,6 +13,19 @@ flowchart LR
   manager[Label manager] -->|statement| api
 ```
 
+
+## Run it in GitHub Codespaces
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Legion91919/wavelength?quickstart=1)
+
+The dev container installs the SDKs, restores packages and runs every test once on first start. The same setup works locally with VS Code's Dev Containers extension.
+
+| What | Command | Port |
+|---|---|---|
+| API (Wavelength) | `ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://0.0.0.0:5105 dotnet run --project src/Wavelength.Api` | 5105 |
+| Web app | `cd web && npm run dev` | 5205 |
+| All tests (same as CI) | `scripts/test-all.sh` | - |
+
 ## What it does (slice 1)
 - Search tracks, artists and albums; accents and case optional ("meridien" finds "Méridien").
 - Play a track in the browser (HTML audio element), add tracks with **+ Next**, manage the queue.
