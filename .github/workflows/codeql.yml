@@ -33,7 +33,7 @@ jobs:
           - language: javascript-typescript
             build-mode: none
     steps:
-      - uses: actions/checkout@v4   # pin by SHA
+      - uses: actions/checkout@v7   # pin by SHA
         with:
           persist-credentials: false
 
